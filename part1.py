@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 ### EPSILON ###
 
@@ -25,7 +25,32 @@ def part_a():
     plt.show()
 
 
-def part_b(p=0.5, size=100, seed=None):
+def part_b(p=0.5, seed=None):
+    '''
+    The connection between epsilon and updated beliefs 
+    Inspired from https://desfontain.es/privacy/differential-privacy-in-more-detail.html
+    '''
+    if seed:
+        np.random.seed(seed)
+
+    p_vals = [0.1, 0.2, 0.5, 0.7, 0.9]
+    c_vals = ['red', 'blue', 'green', 'purple', 'orange']
+    priors = np.array([0.1 * i for i in range(11)]) ## P[D = D_in]
+
+    for p, c in zip(p_vals, c_vals):
+        eps = np.log((1+p)/2) - np.log((1-p)/2)
+
+        upper = (np.exp(eps) * priors)/ (1 + (np.exp(eps)-1)*priors)
+        lower = (priors)/ (np.exp(eps) + (1 - np.exp(eps))*priors)
+
+        plt.plot(priors, upper, c=c)
+        plt.plot(priors, lower, c=c)
+    
+    plt.plot(priors, priors, label='priors')
+    plt.show()
+
+
+def part_c(p=0.5, size=100, seed=None):
     '''
     The connection between epsilon and updated beliefs 
     Inspired from https://desfontain.es/privacy/differential-privacy-in-more-detail.html
@@ -41,22 +66,22 @@ def part_b(p=0.5, size=100, seed=None):
     priors = np.array([0.1 * i for i in range(11)]) ## P[D = D_in]
 
     def algo(D):
+        D = D.copy()
         mask = np.random.rand(size)
         mask = mask<=p  ## 1 implies we randomize
         D[mask] = np.random.randint(2, size=int(mask.sum()))
         return D.sum()
 
-    def simulate(D, res):
+    def simulate(D, res, num_trials=1000):
         counts = defaultdict(int)
-        for _ in range(1000):
+        for _ in range(num_trials):
             x = algo(D)
             counts[x] += 1
-        den = sum(counts.values())
-        counts = {k:v/den for k,v in counts.items()}
+        counts = {k:v/num_trials for k,v in counts.items()}
         return counts[res]
 
-    x1 = algo(D1.copy())
-    x2 = algo(D2.copy())
+    x1 = algo(D1)
+    x2 = algo(D2)
 
     v11 = simulate(D1, x1)
     v12 = simulate(D2, x1)
@@ -82,9 +107,33 @@ def part_b(p=0.5, size=100, seed=None):
 
 
 ### DELTA ###
+def part_d(threshold=5, num_trials=10000, eps=np.log(3), seed=None):
+    '''
+    The intuition behind delta
+    Inspired from https://desfontain.es/privacy/almost-differential-privacy.html
+    '''
+    if seed:
+        np.random.seed()
 
+    def simulate():
+        categories = ['tennis', 'volleyball', 'basketball', 'baseball', 'football']
+
+        D = np.random.choice(categories[:-1], size=100, replace=True)  
+        hist = Counter(D)
+        hist['football'] = 1  ## Make football a rare event
+        hist = {k: v + np.random.laplace(0, 1/eps) for k, v in hist.items()}
+        return hist['football'] >= threshold
+
+    failures = 0
+    for _ in range(num_trials):
+        if simulate():
+            failures += 1
+    
+    print(f"Likelihood of seeing Football in D (approx delta): {round(failures/num_trials, 3)}")
 
 
 if __name__ == '__main__':
     #part_a()
-    part_b()
+    #part_b()
+    part_c()
+    #part_d()
