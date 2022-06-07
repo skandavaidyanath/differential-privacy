@@ -4,7 +4,7 @@ from collections import defaultdict, Counter
 
 ### EPSILON ###
 
-def part_a():
+def part_c():
     '''
     Identifying epsilon and plotting as a function of p
     '''
@@ -25,7 +25,7 @@ def part_a():
     plt.show()
 
 
-def part_b(p=0.5, seed=None):
+def part_d(p=0.5, seed=None):
     '''
     The connection between epsilon and updated beliefs 
     Inspired from https://desfontain.es/privacy/differential-privacy-in-more-detail.html
@@ -43,14 +43,15 @@ def part_b(p=0.5, seed=None):
         upper = (np.exp(eps) * priors)/ (1 + (np.exp(eps)-1)*priors)
         lower = (priors)/ (np.exp(eps) + (1 - np.exp(eps))*priors)
 
-        plt.plot(priors, upper, c=c)
-        plt.plot(priors, lower, c=c)
+        plt.plot(priors, upper, c=c, label=f'p={p}')
+        plt.plot(priors, lower, c=c, label=f'p={p}')
     
     plt.plot(priors, priors, label='priors')
+    plt.legend()
     plt.show()
 
 
-def part_c(p=0.5, size=100, seed=None):
+def part_e(p=0.5, size=100, seed=None):
     '''
     The connection between epsilon and updated beliefs 
     Inspired from https://desfontain.es/privacy/differential-privacy-in-more-detail.html
@@ -107,7 +108,7 @@ def part_c(p=0.5, size=100, seed=None):
 
 
 ### DELTA ###
-def part_d(threshold=5, num_trials=10000, eps=np.log(3), seed=None):
+def part_g(threshold=5, num_trials=10000, eps=np.log(3), seed=None):
     '''
     The intuition behind delta
     Inspired from https://desfontain.es/privacy/almost-differential-privacy.html
@@ -133,8 +134,8 @@ def part_d(threshold=5, num_trials=10000, eps=np.log(3), seed=None):
 
 
 if __name__ == '__main__':
-    #part_a()
-    #part_b()
-    part_c()
+    #part_c()
     #part_d()
+    #part_e()
+    part_g()
     pass

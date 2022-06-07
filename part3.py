@@ -147,9 +147,6 @@ def find_epsilon(N, D, method='sgd', num_trials=1000, train_epochs=5):
         eps = np.log(p1) - np.log(p2)
         epsilons.append(eps)
 
-    #plt.hist(epsilons)
-    #plt.show()
-
     print(f'Estimated Epsilon: {np.max(epsilons)}')
 
 if __name__ == '__main__':
