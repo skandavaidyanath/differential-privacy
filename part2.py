@@ -12,8 +12,8 @@ def part_a(p1=0.5, p2=0.5, size=10, seed=None):
     D2 = D1.copy()
     D2[0] = ~D1[0]  
 
-    eps1 = np.log((1+p1)/2) - np.log((1-p1)/2)
-    eps2 = np.log((1+p2)/2) - np.log((1-p2)/2)
+    eps1 = np.log(1-p1/2) - np.log(p1/2)
+    eps2 = np.log(1-p2/2) - np.log(p2/2)
     
     def algo(D, p):
         D = D.copy()

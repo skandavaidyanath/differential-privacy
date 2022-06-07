@@ -9,10 +9,10 @@ def part_a():
     Identifying epsilon and plotting as a function of p
     '''
     ## The randomization probability
-    p = np.array([0.1 * i for i in range(10)])
+    p = np.array([0.1 * i for i in range(1,10)])
 
-    truth = p + (1-p)/2
-    lie = 1 - truth
+    truth = 1-p/2
+    lie = p/2
 
     epsilon = np.log(truth) - np.log(lie)
 
@@ -38,7 +38,7 @@ def part_b(p=0.5, seed=None):
     priors = np.array([0.1 * i for i in range(11)]) ## P[D = D_in]
 
     for p, c in zip(p_vals, c_vals):
-        eps = np.log((1+p)/2) - np.log((1-p)/2)
+        eps = np.log(1-p/2) - np.log(p/2)
 
         upper = (np.exp(eps) * priors)/ (1 + (np.exp(eps)-1)*priors)
         lower = (priors)/ (np.exp(eps) + (1 - np.exp(eps))*priors)
@@ -62,7 +62,7 @@ def part_c(p=0.5, size=100, seed=None):
     D1 = np.random.randint(2, size=size)
     D2 = D1.copy()
     D2[0] = ~D1[0]     ### Say we only care about the first person
-    eps = np.log((1+p)/2) - np.log((1-p)/2)
+    eps = np.log(1-p/2) - np.log(p/2)
     priors = np.array([0.1 * i for i in range(11)]) ## P[D = D_in]
 
     def algo(D):
@@ -137,3 +137,4 @@ if __name__ == '__main__':
     #part_b()
     part_c()
     #part_d()
+    pass
